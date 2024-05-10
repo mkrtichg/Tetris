@@ -7,18 +7,20 @@ let activeId = [];
 let intervalId = null;
 let figur;
 const board = [];
+
 // gameField.append(board);
 const rowCount = +rowEl.value;
 const colCount = +columnEl.value;
 const sellCount = rowCount * colCount;
+let width = colCount;
 
 
 // -------------------------------   FIGURES -------------------------------------------------
 const figT = [
-    [colCount, colCount + 1, colCount + 2, 1],
-    [0, colCount, colCount * 2, colCount + 1],
-    [colCount, colCount + 1, colCount + 2, colCount * 2 + 1],
-    [0, colCount, colCount * 2, colCount - 1],
+    [width, width + 1, width + 2, 1],
+    [0, width, width * 2, width + 1],
+    [width, width + 1, width + 2, width * 2 + 1],
+    [0, width, width * 2, width - 1],
 ];
 /*
 
@@ -30,10 +32,10 @@ const figT = [
 
 
 const figI = [
-    [0, colCount, colCount * 2, colCount * 3],
-    [colCount, colCount + 1, colCount + 2, colCount + 3],
-    [0, colCount, colCount * 2, colCount * 3],
-    [colCount, colCount + 1, colCount + 2, colCount + 3],
+    [0, width, width * 2, width * 3],
+    [width, width + 1, width + 2, width + 3],
+    [0, width, width * 2, width * 3],
+    [width, width + 1, width + 2, width + 3],
 ];
 /*
 
@@ -42,10 +44,10 @@ const figI = [
 */
 
 const figSqu = [
-    [0, 1, colCount, colCount + 1],
-    [0, 1, colCount, colCount + 1],
-    [0, 1, colCount, colCount + 1],
-    [0, 1, colCount, colCount + 1]
+    [0, 1, width, width + 1],
+    [0, 1, width, width + 1],
+    [0, 1, width, width + 1],
+    [0, 1, width, width + 1]
 ];
 /*
 
@@ -55,10 +57,10 @@ const figSqu = [
 */
 
 const figZ = [
-    [0, 1, colCount + 1, colCount + 2],
-    [1, colCount, colCount + 1, colCount * 2],
-    [0, 1, colCount + 1, colCount + 2],
-    [1, colCount, colCount + 1, colCount * 2],
+    [0, 1, width + 1, width + 2],
+    [1, width, width + 1, width * 2],
+    [0, 1, width + 1, width + 2],
+    [1, width, width + 1, width * 2],
 ];
 
 /*
@@ -70,10 +72,10 @@ const figZ = [
 
 
 const figForwZ = [
-    [1, 0, colCount, colCount - 1],
-    [0, colCount, colCount + 1, colCount * 2 + 1],
-    [1, 0, colCount, colCount - 1],
-    [0, colCount, colCount + 1, colCount * 2 + 1],
+    [1, 0, width, width - 1],
+    [0, width, width + 1, width * 2 + 1],
+    [1, 0, width, width - 1],
+    [0, width, width + 1, width * 2 + 1],
 ];
 
 /*
@@ -85,10 +87,10 @@ const figForwZ = [
 */
 
 const figL = [
-    [1, colCount + 1, colCount * 2 + 1, 0],
-    [colCount, colCount + 1, colCount + 2, 2],
-    [1, colCount + 1, colCount * 2 + 1, colCount * 2 + 2],
-    [colCount, colCount + 1, colCount + 2, colCount * 2 + 2]
+    [1, width + 1, width * 2 + 1, 0],
+    [width, width + 1, width + 2, 2],
+    [1, width + 1, width * 2 + 1, width * 2 + 2],
+    [width, width + 1, width + 2, width * 2 + 2]
 ];
 
 /*
@@ -102,10 +104,10 @@ const figL = [
 
 
 const figForwL = [
-    [1, colCount + 1, colCount * 2 + 1, 2],
-    [colCount, colCount + 1, colCount + 2, colCount * 2 + 2],
-    [1, colCount + 1, colCount * 2 + 1, colCount * 2],
-    [colCount, colCount * 2, colCount * 2 + 1, colCount * 2 + 2]
+    [1, width + 1, width * 2 + 1, 2],
+    [width, width + 1, width + 2, width * 2 + 2],
+    [1, width + 1, width * 2 + 1, width * 2],
+    [width, width * 2, width * 2 + 1, width * 2 + 2]
 ];
 
 
@@ -115,10 +117,10 @@ const colors = {
     figT: 'red',
     figI: 'green',
     figSqu: 'yellow',
-    fig4: 'blue',
-    figForw4: 'purple',
-    fig7: 'brown',
-    figForw7: 'orange'
+    figZ: 'blue',
+    figForwZ: 'purple',
+    figL: 'brown',
+    figForwL: 'orange'
 }
 
 /*
@@ -167,28 +169,78 @@ startBtn.addEventListener('click', () => {
     // const board = document.querySelector('.cell')
     let curentPosition = 4;
     let k = 0;
+    let currentFigure = figures[randomNumGen(7)][k];
+    let nextFigure = figures[randomNumGen(7)][k];
 
 
     function draw() {
         // debugger;
-        let currentFigure = figures[randomNumGen(7)][k];
-        let nextFigure = figures[randomNumGen(7)][k];
+
         currentFigure.forEach(item => {
             board[curentPosition + item].classList.add('figure')
             board[curentPosition + item].setAttribute('value', 1)
             activeId.push(+board[curentPosition + item].id);
         });
-
-        // const nextView = Array.from(document.getElementsByClassName('nextFig'));
-        // nextFigure.forEach(item => {
-        //     nextView[2 + item /(colCount / 5) ].classList.add('nextFigure')
-        //     // nextView[curentPosition + item].setAttribute('value', 1)
-        // });
+    }
 
 
+
+    function drawNext(fig) {
+        // debugger;
+        let width = 5;
+        let figure;
+        let color;
+
+        switch (fig) {
+            case figT[0]:
+                figure = [width, width + 1, width + 2, 1];
+                color = colors.figT;
+                break;
+            case figI[0]:
+                figure = [0, width, width * 2, width * 3];
+                color = colors.figI;
+                break;
+            case figSqu[0]:
+                figure = [0, 1, width, width + 1];
+                color = colors.figSqu;
+                break;
+            case figZ[0]:
+                figure = [0, 1, width + 1, width + 2];
+                color = colors.figZ;
+                break;
+            case figForwZ[0]:
+                figure = [1, 0, width, width - 1];
+                color = colors.figForwZ;
+                break;
+            case figL[0]:
+                figure = [1, width + 1, width * 2 + 1, 0];
+                color = colors.figL;
+                break;
+            case figForwL[0]:
+                figure = [1, width + 1, width * 2 + 1, 2];
+                color = colors.figForwL;
+                break;
+        }
+        // const nextView = [];
+        const nextView = Array.from(document.getElementsByClassName('nextFig'));
+        // nextView.innerHTML = "";
+        figure.forEach(item => {
+            nextView[1 + item].classList.add('nextFigure');
+            // item.nextFigure.style.backgroundColor = color;
+            // item.className('nextFigure').style.backgroundColor = color;
+
+        },
+
+        // const figDiv = document.getSelection,
+
+        // figDiv.map(div =>{
+        //     div.nextFigure.style.backgroundColor = color;
+        // })
+    );
     }
 
     draw();
+    drawNext(nextFigure);
 
 
 
@@ -315,4 +367,8 @@ function moveLeft() {
 
 function moveRight() {
     move(1);
+}
+
+function createFigures(width) {
+
 }
