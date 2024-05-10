@@ -144,8 +144,8 @@ startBtn.addEventListener('click', () => {
     const gameBoard = document.createElement('div')
     gameBoard.id = "game"
     gameBoard.innerHTML = "";
-    gameBoard.style.width = colCount * 32 + "px";
-    gameBoard.style.height = rowCount * 32 + "px";
+    gameBoard.style.width = colCount * 22 + "px";
+    gameBoard.style.height = rowCount * 22 + "px";
     gameField.append(gameBoard);
     const cell = {};
 
