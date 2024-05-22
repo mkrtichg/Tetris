@@ -7,6 +7,7 @@ let activeId = [];
 let intervalId = null;
 let figur;
 const board = [];
+let i = 0;
 
 // gameField.append(board);
 const rowCount = +rowEl.value;
@@ -168,11 +169,12 @@ startBtn.addEventListener('click', () => {
 
     // const board = document.querySelector('.cell')
     let curentPosition = 4;
-    let k = 0;
-    let currentFigure = figures[randomNumGen(7)][k];
-    let nextFigure = figures[randomNumGen(7)][k];
+    let currentRotation = 0;
+    let figure = figures[randomNumGen(7)];
+    let currentFigure = figur[currentRotation]
+    let nextFigure = figures[randomNumGen(7)][0];
 
-
+    // Drawing the figure
     function draw() {
         // debugger;
 
@@ -182,6 +184,19 @@ startBtn.addEventListener('click', () => {
             activeId.push(+board[curentPosition + item].id);
         });
     }
+
+
+    //  Undrawing the figure 
+    function undraw() {
+        // debugger;
+
+        currentFigure.forEach(item => {
+            board[curentPosition + item].classList.remove('figure')
+            board[curentPosition + item].setAttribute('value', 0)
+            activeId.splice(0);
+        });
+    }
+
 
 
 
@@ -231,12 +246,12 @@ startBtn.addEventListener('click', () => {
 
         },
 
-        // const figDiv = document.getSelection,
+            // const figDiv = document.getSelection,
 
-        // figDiv.map(div =>{
-        //     div.nextFigure.style.backgroundColor = color;
-        // })
-    );
+            // figDiv.map(div =>{
+            //     div.nextFigure.style.backgroundColor = color;
+            // })
+        );
     }
 
     draw();
@@ -276,6 +291,15 @@ startBtn.addEventListener('click', () => {
                 break;
             case 'ArrowDown':
                 moveDown();
+                break;
+            case 'ArrowUp':
+                if (currentRotation === 3) {
+                    currentRotation = 0;
+                    figureOrientation()
+                } else {
+                    currentRotation++;
+                    figureOrientation()
+                };
                 break;
         }
     })
@@ -333,7 +357,7 @@ function move(step) {
 
     const activeFigure = Array.from(document.getElementsByClassName('figure'));
     // const activeEl = Array.from(document.getElementById(activeId));  
-    const nextActiveId = activeId.map(item => item + step);
+    const nextActiveId = activeId.map(id => id + step);
     const nextActiveFigure = [];
     nextActiveId.forEach(item => nextActiveFigure.push(document.getElementById(`${item}`)));
     activeFigure.forEach(item => { item.classList.remove('figure'); item.setAttribute('value', 0) });
@@ -362,13 +386,50 @@ function moveDown() {
 }
 
 function moveLeft() {
+    if (
+        activeId.some(item => Math.floor(item / colCount) === rowCount - 1) ||
+        activeId.some(item => board[item + colCount].value === 2) ||
+        activeId.some(item => board[item + 1].value === 2) ||
+        activeId.some(item => board[item - 1].value === 2)
+    ) {
+        return
+    }
     move(-1);
 }
 
 function moveRight() {
+    if (
+        activeId.some(item => Math.floor(item / colCount) === rowCount - 1) ||
+        activeId.some(item => board[item + colCount].value === 2) ||
+        activeId.some(item => board[item + 1].value === 2) ||
+        activeId.some(item => board[item - 1].value === 2)
+    ) {
+        return
+    }
     move(1);
+}
+
+function figureOrientation() {
+
+    currentFigure.forEach(item => {
+        move(item);
+
+    });
+
+
 }
 
 function createFigures(width) {
 
 }
+
+
+// function rule(){
+
+//     return {
+//         activeId.some(item => Math.floor(item / colCount) === rowCount - 1) ||
+//         activeId.some(item => board[item + colCount].value === 2) ||5
+//         /*activeId.some(item => board[item + 1].value === 2) ||
+//         activeId.some(item => board[item - 1].value === 2)*/
+//     }
+// }
