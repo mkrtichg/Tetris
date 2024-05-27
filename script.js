@@ -3,18 +3,28 @@ const columnEl = document.getElementById('column');
 const startBtn = document.getElementById('start');
 const gameField = document.getElementById('gameField');
 const score = document.getElementById('score');
+let scoreCount = 0;
 let activeId = [];
 let intervalId = null;
 let figur;
-const board = [];
+let board = [];
+const taken = [];
 let i = 0;
+
 
 // gameField.append(board);
 const rowCount = +rowEl.value;
 const colCount = +columnEl.value;
 const sellCount = rowCount * colCount;
 let width = colCount;
+let currentFigure;
+let nextFigure;
+let currentRotation = 0;
 
+// Deffinding Right and Left vertical borders
+
+// let borderLeft;
+// let borderRight;
 
 // -------------------------------   FIGURES -------------------------------------------------
 const figT = [
@@ -141,14 +151,29 @@ const figures = [figT, figI, figSqu, figZ, figForwZ, figL, figForwL];
 
 startBtn.addEventListener('click', () => {
     // debugger;
+    scoreCount = 0;
+    score.innerText = scoreCount;
     gameField.innerHTML = "";
     const gameBoard = document.createElement('div')
+    /*
+    board = Array.from(document.createElement('div'));
+    board.id = "game"
+    board.innerHTML = "";
+    board.style.width = colCount * 22 + "px";
+    board.style.height = rowCount * 22 + "px";
+    */
     gameBoard.id = "game"
     gameBoard.innerHTML = "";
     gameBoard.style.width = colCount * 22 + "px";
     gameBoard.style.height = rowCount * 22 + "px";
+    // board = Array.from(gameBoard);
     gameField.append(gameBoard);
     const cell = {};
+
+
+
+
+
 
     for (let i = 0; i < sellCount; i++) {
         const cellEl = document.createElement('div');
@@ -163,26 +188,36 @@ startBtn.addEventListener('click', () => {
             y: Math.floor(i / colCount),
             x: i % colCount,
         }
+
         board.push(cellEl);
         gameBoard.append(cellEl);
     }
+    // gameBoard.append(board);
 
-    // const board = document.querySelector('.cell')
+
     let curentPosition = 4;
-    let currentRotation = 0;
-    let figure = figures[randomNumGen(7)];
-    let currentFigure = figur[currentRotation]
-    let nextFigure = figures[randomNumGen(7)][0];
+    let index = randomNumGen(7);
+    currentFigure = figures[index];
+    let nameForClass = randomFigSelection(index);
+    nextFigure = figures[randomNumGen(7)];
 
     // Drawing the figure
     function draw() {
         // debugger;
 
-        currentFigure.forEach(item => {
-            board[curentPosition + item].classList.add('figure')
-            board[curentPosition + item].setAttribute('value', 1)
+        currentFigure[currentRotation].forEach(item => {
+            board[curentPosition + item].classList.add('figure', `${nameForClass}`);
+            board[curentPosition + item].setAttribute('value', 1);
             activeId.push(+board[curentPosition + item].id);
+            // className.
         });
+
+        // activeId.forEach(div => div.style.className(nameForClass).backgroundColor = colors[nameForClass]);
+        // activeId.forEach(div => div.style.nameForClass.backgroundColor = colors[nameForClass]);
+        // item.nextFigure.style.backgroundColor = color;
+        // item.className('nextFigure').style.backgroundColor = color;
+
+
     }
 
 
@@ -190,12 +225,220 @@ startBtn.addEventListener('click', () => {
     function undraw() {
         // debugger;
 
-        currentFigure.forEach(item => {
-            board[curentPosition + item].classList.remove('figure')
-            board[curentPosition + item].setAttribute('value', 0)
+        currentFigure[currentRotation].forEach(item => {
+            board[curentPosition + item].classList.remove('figure', `${nameForClass}`);
+            board[curentPosition + item].setAttribute('value', 0);
             activeId.splice(0);
+
         });
     }
+
+    // ---------------------------------------------------------------------------------------
+
+
+
+    // creating function for checking if the row is fillid
+
+
+    function lineIsCompleted() {
+        // debugger;
+        for (let i = 0; i < rowCount; i++) {
+            const divs = [];
+            for (let j = 0; j < colCount; j++) {
+                board.forEach(div => {
+                    if (div.getAttribute("y") == i && div.getAttribute("x") == j) {
+                        divs.push(div)
+                    }
+                })
+            }
+            if (divs.every(div => div.getAttribute("value") == 2)) {
+                // debugger;
+                scoreCount++;
+                score.innerText = scoreCount;
+                // const removed = board.splice(+divs[0].id)
+                divs.map(div => {
+                    // debugger;
+                    div.setAttribute("value", 0);
+                    const list = div.classList.value;
+                    const classnames = list.split(' ').splice(1);
+                    classnames.map(classname => div.classList.remove(classname));
+
+                })
+
+                // const removed =  board.splice(i*colCount, colCount);
+                // board = removed.concat(board);   
+
+                const taken = Array.from(document.getElementsByClassName('taken'));
+                taken.map(div => {
+                    if (div.getAttribute("value") !== 2) {
+                        debugger;
+                        undraw();
+                        div.classList.value;
+                        const classnames = list.split(' ').splice(1);
+                        classnames.map(classname => div.classList.remove(classname));
+                        const id = +div.id + colCount;
+                        const newLineDiv = document.getElementById(`${id}`);
+                        classnames.map(classname => newLineDiv.classList.add(classname));
+                        newLineDiv.setAttribute("value", 2);
+                        draw();
+                    }
+
+                })
+
+            }
+        }
+
+
+
+
+
+    }
+
+
+    // ---------------------------------------------------------------------------------------
+
+    //Creating functions for moving by directions
+
+    // declaring moving function
+
+
+    function move(step) {
+
+        undraw();
+        curentPosition += step;
+        draw();
+
+        // debugger;
+        lineIsCompleted();
+
+
+        // const activeFigure = Array.from(document.getElementsByClassName('figure'));    
+        // const nextActiveId = activeId.map(id => id + step);
+        // const nextActiveFigure = [];
+        // nextActiveId.forEach(item => nextActiveFigure.push(document.getElementById(`${item}`)));
+        // activeFigure.forEach(item => { item.classList.remove('figure'); item.setAttribute('value', 0) });
+        // nextActiveFigure.forEach(item => { item.classList.add('figure'); item.setAttribute('value', 1) });
+        // activeId.splice(0);
+        // nextActiveId.splice(0).forEach(item => activeId.push(item))
+    }
+
+    // moveing down
+
+    function moveDown() {
+        //   debugger;
+        if (
+            activeId.some(item => Math.floor(item / colCount) === rowCount - 1) ||
+            activeId.some(item => board[item + colCount].getAttribute("value") === "2")
+        ) {
+            // debugger;
+            clearInterval(intervalId);
+            intervalId = null;
+
+            activeId.forEach(id => {
+                board[id].setAttribute('value', 2);
+                board[id].classList.add('taken');
+                board[id].classList.remove('figure');
+                taken.push(board[id]);
+            })
+
+            activeId.splice(0);
+            curentPosition = 4
+            currentRotation = 0;
+            currentFigure = nextFigure;
+            index = randomNumGen(7);
+            nextFigure = figures[index];
+            nameForClass = randomFigSelection(index);
+            draw();
+            drawNext(nextFigure[0]);
+            intervalId = setInterval(() => { moveDown() }, 1000);
+            return
+        }
+
+        let isFilled = false;
+        for (let i = 0; i < colCount; i++) {
+            if (board[i].classList.contains('taken')) {
+                isFilled = true;
+                break;
+            }
+        }
+
+        if (isFilled) {
+            // debugger;
+            clearInterval(intervalId);
+            intervalId = null;
+            alert("Game Over");
+            return
+        }
+
+        move(colCount);
+    }
+
+    //Moving left
+
+    function moveLeft() {
+        // debugger;
+        const borderLeft = activeId.some(part => {
+            // debugger;
+            if (part % colCount === 0) {
+                return true
+            }
+        });
+
+        if (activeId.some(item => board[item - 1].getAttribute("value") === "2")) {
+            return
+        }
+
+
+        if (!borderLeft) {
+            // debugger;
+            move(-1);
+        }
+
+    }
+
+
+    //Moving right
+
+    function moveRight() {
+        // debugger;
+
+        const borderRight = activeId.some(part => {
+            // debugger;        
+            if (part % colCount === colCount - 1) {
+                return true
+            }
+        });
+
+        if (activeId.some(item => board[item + 1].getAttribute("value") === "2")) {
+            return
+        }
+
+
+        if (!borderRight) {
+            // debugger;
+            move(1);
+        }
+
+    }
+
+
+
+
+
+    function figureRotation() {
+        undraw();
+
+        if (currentRotation === currentFigure.length - 1) {
+            currentRotation = 0;
+        } else {
+            currentRotation++;
+        };
+
+        currentFigure[currentRotation];
+        draw();
+    }
+
+
 
 
 
@@ -238,7 +481,10 @@ startBtn.addEventListener('click', () => {
         }
         // const nextView = [];
         const nextView = Array.from(document.getElementsByClassName('nextFig'));
-        // nextView.innerHTML = "";
+        nextView.innerHTML = "";
+        nextView.forEach(item => {
+            item.classList.remove('nextFigure')
+        });
         figure.forEach(item => {
             nextView[1 + item].classList.add('nextFigure');
             // item.nextFigure.style.backgroundColor = color;
@@ -254,30 +500,12 @@ startBtn.addEventListener('click', () => {
         );
     }
 
+    // drawing and moving the figure
     draw();
-    drawNext(nextFigure);
-
-
+    drawNext(nextFigure[0]);
 
     intervalId = setInterval(() => { moveDown() }, 1000);
-    if (intervalId === null) {
 
-    }
-
-
-    // document.addEventListener('keydown', (event) => {
-    //     debugger;
-    //     if (event === 'ArrowLeft') {
-    //         moveLeft();
-    //         return
-    //     } else if (event === 'ArrowRight') {
-    //         moveRight()
-    //         return
-    //     } else if (event === 'ArrowDown') {
-    //         moveDown();
-    //         return
-    //     }
-    // })
 
 
     document.addEventListener('keydown', (event) => {
@@ -293,28 +521,10 @@ startBtn.addEventListener('click', () => {
                 moveDown();
                 break;
             case 'ArrowUp':
-                if (currentRotation === 3) {
-                    currentRotation = 0;
-                    figureOrientation()
-                } else {
-                    currentRotation++;
-                    figureOrientation()
-                };
+                figureRotation();
                 break;
         }
     })
-
-
-
-
-
-
-
-    // for (let i = 0; i < rowCount; i++) {
-    //     const row = Array(colCount).fill(0, 0);
-    //     board.push(row);
-    // }
-    // game.append(board);
 
 })
 
@@ -322,27 +532,31 @@ startBtn.addEventListener('click', () => {
 
 
 
-function randomFigSelection() {
-    const i = randomNumGen(7);
+function randomFigSelection(num) {
 
-    return figures[i]
+    let figure;
 
-    /* switch (i) {
-         case 0: figure = figT;
-             break;
-         case 1: figure = figI;
-             break;
-         case 2: figure = fig4;
-             break;
-         case 3: figure = figForw4;
-             break;
-         case 4: figure = fig7;
-             break;
-         case 5: figure = figForw7;
-             break;
-         case 6: figure = figSqu;
-             break;
-     }*/
+    // const i = randomNumGen(7);
+    // return figures[i]
+
+    switch (num) {
+        case 0: figure = 'figT';
+            break;
+        case 1: figure = 'figI';
+            break;
+        case 2: figure = 'figSqu';
+            break;
+        case 3: figure = 'figZ';
+            break;
+        case 4: figure = 'figForwZ';
+            break;
+        case 5: figure = 'figL';
+            break;
+        case 6: figure = 'figForwL';
+            break;
+    }
+
+    return figure;
 }
 
 
@@ -352,76 +566,16 @@ function randomNumGen(max) {
 }
 
 
-function move(step) {
-    // debugger;
-
-    const activeFigure = Array.from(document.getElementsByClassName('figure'));
-    // const activeEl = Array.from(document.getElementById(activeId));  
-    const nextActiveId = activeId.map(id => id + step);
-    const nextActiveFigure = [];
-    nextActiveId.forEach(item => nextActiveFigure.push(document.getElementById(`${item}`)));
-    activeFigure.forEach(item => { item.classList.remove('figure'); item.setAttribute('value', 0) });
-    nextActiveFigure.forEach(item => { item.classList.add('figure'); item.setAttribute('value', 1) });
-    activeId.splice(0);
-    nextActiveId.splice(0).forEach(item => activeId.push(item))
-}
-
-function moveDown() {
-    //   debugger;
-    if (
-        activeId.some(item => Math.floor(item / colCount) === rowCount - 1) ||
-        activeId.some(item => board[item + colCount].value === 2) ||
-        activeId.some(item => board[item + 1].value === 2) ||
-        activeId.some(item => board[item - 1].value === 2)
-    ) {
-        clearInterval(intervalId);
-        intervalId = null;
-        activeId.forEach(id => board[id].setAttribute('value', 2))
-        // nextFig();
-        activeId.splice(0);
-        return
-    }
-
-    move(colCount);
-}
-
-function moveLeft() {
-    if (
-        activeId.some(item => Math.floor(item / colCount) === rowCount - 1) ||
-        activeId.some(item => board[item + colCount].value === 2) ||
-        activeId.some(item => board[item + 1].value === 2) ||
-        activeId.some(item => board[item - 1].value === 2)
-    ) {
-        return
-    }
-    move(-1);
-}
-
-function moveRight() {
-    if (
-        activeId.some(item => Math.floor(item / colCount) === rowCount - 1) ||
-        activeId.some(item => board[item + colCount].value === 2) ||
-        activeId.some(item => board[item + 1].value === 2) ||
-        activeId.some(item => board[item - 1].value === 2)
-    ) {
-        return
-    }
-    move(1);
-}
-
-function figureOrientation() {
-
-    currentFigure.forEach(item => {
-        move(item);
-
-    });
 
 
-}
 
-function createFigures(width) {
 
-}
+
+
+
+
+
+
 
 
 // function rule(){

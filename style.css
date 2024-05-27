@@ -74,6 +74,33 @@
     background-color: blue;
 }
 
+.taken{
+    background-color: blue;
+}
+
 .nextFigure {
     background-color:darkcyan
+}
+
+.figT{
+    background-color: red;
+}
+.figI{
+    background-color: green;
+}
+.figSqu{
+    background-color: yellow;
+}
+
+.figZ{
+    background-color: blue;
+}
+.figForwZ{
+    background-color: purple;
+}
+.figL{
+    background-color: brown;
+} 
+.figForwL{
+    background-color: orange;
 }
