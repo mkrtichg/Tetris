@@ -101,7 +101,7 @@ const figL = [
     [1, width + 1, width * 2 + 1, 0],
     [width, width + 1, width + 2, 2],
     [1, width + 1, width * 2 + 1, width * 2 + 2],
-    [width, width + 1, width + 2, width * 2 + 2]
+    [width, width + 1, width + 2, width * 2]
 ];
 
 /*
@@ -121,7 +121,13 @@ const figForwL = [
     [width, width * 2, width * 2 + 1, width * 2 + 2]
 ];
 
+/*
 
+  *
+  * 
+* *
+  
+*/
 
 
 const colors = {
@@ -134,13 +140,7 @@ const colors = {
     figForwL: 'orange'
 }
 
-/*
 
-  *
-  * 
-* *
-  
-*/
 
 
 const figures = [figT, figI, figSqu, figZ, figForwZ, figL, figForwL];
